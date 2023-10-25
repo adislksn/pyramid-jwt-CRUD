@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="login-form">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+<script>
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting normally
+
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        // Data to be sent as JSON
+        var jsonData = {
+            username: username,
+            password: password
+        };
+
+        // Send an asynchronous request to the /api/login endpoint using Fetch API
+        fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result === 'ok') {
+                document.cookie = 'token=' + data.token;
+                window.location.href = '/home';
+            } else {
+                throw new Error('Login failed. Please check your credentials.');
+            }
+        })
+    });
+</script>
+</html>
